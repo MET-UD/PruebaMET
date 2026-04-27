@@ -357,6 +357,29 @@
             color: #003d82;
         }
 
+        .game-message.error {
+            background-color: #ff6b35;
+            color: white;
+        }
+
+        .option-btn {
+            background-color: #f4f4f4;
+            border: 2px solid #ddd;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s, border-color 0.3s;
+            width: 100%;
+            max-width: 400px;
+            text-align: left;
+        }
+
+        .option-btn:hover {
+            background-color: #e0e0e0;
+            border-color: #ff6b35;
+        }
+
         footer {
             background-color: #003d82;
             color: white;
@@ -393,7 +416,7 @@
             }
 
             .game-info {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -539,6 +562,10 @@
                         <p id="moves-count">0</p>
                     </div>
                     <div class="game-info-item">
+                        <h4>Vidas</h4>
+                        <p id="lives-count">3</p>
+                    </div>
+                    <div class="game-info-item">
                         <h4>Tiempo</h4>
                         <p id="time-count">0s</p>
                     </div>
@@ -546,9 +573,15 @@
 
                 <div class="memory-grid" id="memory-grid"></div>
 
+                <div id="question-section" style="display: none; margin-top: 2rem; text-align: center;">
+                    <h3>¡Pregunta de Cultura General!</h3>
+                    <p id="question-text" style="margin: 1rem 0; font-size: 1.2rem;"></p>
+                    <div id="question-options" style="display: flex; flex-direction: column; gap: 0.5rem; align-items: center;"></div>
+                </div>
+
                 <div class="game-buttons">
                     <button class="game-btn" onclick="initGame()">Nuevo Juego</button>
-                    <button class="game-btn" onclick="resetGame()">Reiniciar</button>
+                    <button class="game-btn" onclick="resetGame()">Iniciar</button>
                 </div>
 
                 <div class="game-message" id="game-message"></div>
@@ -613,6 +646,71 @@
         let seconds = 0;
         let gameStarted = false;
         let timerInterval;
+        let lives = 3;
+        let questions = [
+            {
+                question: "¿Qué es la ingeniería de prompts?",
+                options: ["a) Programar modelos de inteligencia artificial desde cero", "b) Diseñar y optimizar instrucciones para obtener mejores respuestas de una IA", "c) Crear hardware para sistemas inteligentes", "d) Entrenar redes neuronales manualmente"],
+                answer: "b"
+            },
+            {
+                question: "¿Cuál es el objetivo principal de un prompt bien diseñado?",
+                options: ["a) Generar respuestas largas sin importar la calidad", "b) Obtener respuestas claras, precisas y útiles", "c) Reducir el tiempo de uso de la IA", "d) Evitar que la IA responda"],
+                answer: "b"
+            },
+            {
+                question: "¿Cuál de los siguientes elementos mejora más un prompt?",
+                options: ["a) Ambigüedad", "b) Falta de contexto", "c) Claridad y especificidad", "d) Uso excesivo de palabras técnicas"],
+                answer: "c"
+            },
+            {
+                question: "¿Qué significa proporcionar \"contexto\" en un prompt?",
+                options: ["a) Escribir muchas palabras sin relación", "b) Dar información adicional relevante para guiar la respuesta", "c) Usar lenguaje complejo", "d) Repetir la misma instrucción"],
+                answer: "b"
+            },
+            {
+                question: "¿Qué técnica consiste en incluir ejemplos dentro del prompt?",
+                options: ["a) Zero-shot prompting", "b) One-shot o few-shot prompting", "c) Prompt aleatorio", "d) Prompt inverso"],
+                answer: "b"
+            },
+            {
+                question: "¿Cuál es una característica de un mal prompt?",
+                options: ["a) Es claro", "b) Es específico", "c) Es ambiguo", "d) Incluye instrucciones detalladas"],
+                answer: "c"
+            },
+            {
+                question: "¿Qué es el \"zero-shot prompting\"?",
+                options: ["a) Dar múltiples ejemplos antes de la tarea", "b) No dar ningún ejemplo y pedir directamente la tarea", "c) Entrenar el modelo nuevamente", "d) Usar código para programar la IA"],
+                answer: "b"
+            },
+            {
+                question: "¿Por qué es útil estructurar un prompt en pasos o instrucciones?",
+                options: ["a) Para hacerlo más largo", "b) Para confundir al modelo", "c) Para guiar mejor el proceso de respuesta", "d) Para reducir la precisión"],
+                answer: "c"
+            },
+            {
+                question: "¿Cuál de los siguientes prompts es mejor?",
+                options: ["a) \"Háblame de algo interesante.\"", "b) \"Explica la fotosíntesis.\"", "c) \"Explica la fotosíntesis en 5 pasos, para estudiantes de secundaria, usando ejemplos sencillos.\"", "d) \"Dime cosas.\""],
+                answer: "c"
+            },
+            {
+                question: "¿Qué rol cumple la iteración en la ingeniería de prompts?",
+                options: ["a) Ninguno", "b) Permite mejorar progresivamente los resultados ajustando el prompt", "c) Hace que la IA deje de funcionar", "d) Reemplaza el modelo"],
+                answer: "b"
+            },
+            {
+                question: "¿Qué tipo de prompt pediría una respuesta creativa?",
+                options: ["a) \"Define el concepto de energía.\"", "b) \"Escribe un cuento corto de ciencia ficción sobre inteligencia artificial.\"", "c) \"Resuelve 2+2.\"", "d) \"Enumera los planetas.\""],
+                answer: "b"
+            },
+            {
+                question: "¿Qué problema puede generar un prompt mal diseñado?",
+                options: ["a) Respuestas más rápidas", "b) Respuestas irrelevantes o incorrectas", "c) Mejor comprensión del tema", "d) Mayor precisión"],
+                answer: "b"
+            }
+        ];
+        let currentQuestion = null;
+        let waitingForAnswer = false;
 
         function initGame() {
             // Crear array con pares de emojis
@@ -622,7 +720,9 @@
             moves = 0;
             matchedCount = 0;
             seconds = 0;
+            lives = 3;
             gameStarted = true;
+            waitingForAnswer = false;
 
             // Limpiar el temporizador anterior
             clearInterval(timerInterval);
@@ -637,6 +737,27 @@
             }, 1000);
 
             // Limpiar mensaje
+            document.getElementById('game-message').classList.remove('show');
+            document.getElementById('question-section').style.display = 'none';
+            document.getElementById('lives-count').textContent = lives;
+
+            // Mostrar instrucciones
+            showInstructions();
+        }
+
+        function showInstructions() {
+            const message = document.getElementById('game-message');
+            message.classList.add('show');
+            message.classList.remove('success', 'error');
+            message.innerHTML = `
+                <h3>¡Bienvenido al Juego de Memoria! 🎮</h3>
+                <p>Haz clic en dos tarjetas para revelar los emojis. Si encuentras un par, quedan descubiertas. Si no, responderás una pregunta de cultura general.</p>
+                <p>Tienes 3 vidas. Si respondes mal a la pregunta, pierdes una vida. ¡Buena suerte!</p>
+                <button onclick="startGame()" class="btn" style="margin-top: 1rem;">¡Empezar!</button>
+            `;
+        }
+
+        function startGame() {
             document.getElementById('game-message').classList.remove('show');
         }
 
@@ -664,7 +785,7 @@
         }
 
         function flipCard(index) {
-            if (!gameStarted || matched.includes(index) || flipped.includes(index)) return;
+            if (!gameStarted || matched.includes(index) || flipped.includes(index) || waitingForAnswer) return;
 
             flipped.push(index);
             renderCards();
@@ -685,14 +806,65 @@
                 renderCards();
 
                 if (matchedCount === emojis.length) {
-                    endGame();
+                    endGame(true);
                 }
             } else {
                 setTimeout(() => {
-                    flipped = [];
-                    renderCards();
+                    askQuestion();
                 }, 1000);
             }
+        }
+
+        function askQuestion() {
+            waitingForAnswer = true;
+            currentQuestion = questions[Math.floor(Math.random() * questions.length)];
+            const questionSection = document.getElementById('question-section');
+            questionSection.style.display = 'block';
+            document.getElementById('question-text').textContent = currentQuestion.question;
+            const optionsDiv = document.getElementById('question-options');
+            optionsDiv.innerHTML = '';
+            currentQuestion.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = option;
+                btn.onclick = () => checkAnswer(option.charAt(0));
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected) {
+            if (selected === currentQuestion.answer) {
+                // Respuesta correcta
+                document.getElementById('question-section').style.display = 'none';
+                flipped = [];
+                renderCards();
+                waitingForAnswer = false;
+                showMessage('¡Correcto! Continúa jugando. 😊', 'success');
+            } else {
+                // Respuesta incorrecta
+                lives--;
+                document.getElementById('lives-count').textContent = lives;
+                if (lives <= 0) {
+                    endGame(false);
+                } else {
+                    document.getElementById('question-section').style.display = 'none';
+                    flipped = [];
+                    renderCards();
+                    waitingForAnswer = false;
+                    showMessage(`¡Incorrecto! Pierdes una vida. Te quedan ${lives} vidas. 😔`, 'error');
+                }
+            }
+        }
+
+        function showMessage(text, type) {
+            const message = document.getElementById('game-message');
+            message.classList.add('show');
+            message.classList.remove('success', 'error');
+            message.classList.add(type);
+            message.textContent = text;
+            setTimeout(() => {
+                message.classList.remove('show');
+            }, 3000);
         }
 
         function updateStats() {
@@ -700,24 +872,45 @@
             document.getElementById('moves-count').textContent = moves;
         }
 
-        function endGame() {
+        function endGame(won) {
             gameStarted = false;
             clearInterval(timerInterval);
+            waitingForAnswer = false;
+            document.getElementById('question-section').style.display = 'none';
 
             const message = document.getElementById('game-message');
-            message.classList.add('show', 'success');
-            message.textContent = `¡Ganaste! Completaste el juego en ${moves} movimientos en ${seconds} segundos. 🎉`;
+            message.classList.add('show');
+            message.classList.remove('success', 'error');
+            if (won) {
+                message.classList.add('success');
+                message.textContent = `¡Ganaste! Completaste el juego en ${moves} movimientos en ${seconds} segundos. 🎉`;
+            } else {
+                message.classList.add('error');
+                message.innerHTML = `
+                    <h3>¡Perdiste todas tus vidas! 😢</h3>
+                    <p>Reiniciando el juego con un nuevo tablero...</p>
+                    <button onclick="initGame()" class="btn" style="margin-top: 1rem;">Reiniciar Ahora</button>
+                `;
+                setTimeout(() => {
+                    initGame();
+                }, 5000);
+            }
         }
 
         function resetGame() {
             gameStarted = false;
             clearInterval(timerInterval);
             document.getElementById('game-message').classList.remove('show');
+            document.getElementById('question-section').style.display = 'none';
             initGame();
         }
 
         // Iniciar juego al cargar la página
-        window.addEventListener('DOMContentLoaded', initGame);
+        window.addEventListener('DOMContentLoaded', () => {
+            showInstructions();
+        });
     </script>
 </body>
 </html>
+
+

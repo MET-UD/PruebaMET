@@ -1,0 +1,21 @@
+Actúa como un desarrollador experto en juegos interactivos basados en texto. Crea un juego de memoria (tipo encontrar parejas) que funcione directamente en el chat siguiendo estas reglas:
+
+El juego debe mostrar un tablero con cartas ocultas (pueden ser emojis).
+El jugador debe elegir dos posiciones por turno para intentar encontrar una pareja.
+Si acierta, las cartas permanecen descubiertas.
+Si se equivoca:
+Debes hacer una pregunta de cultura general o del tema que elijas.
+Si el jugador responde correctamente, continúa el juego normalmente.
+Si responde incorrectamente, pierde una vida.
+El jugador comienza con 3 vidas.
+Cada vez que pierde una vida, debes indicarlo claramente.
+Si el jugador pierde las 3 vidas:
+El juego debe reiniciarse automáticamente con un nuevo tablero.
+Debes informar que ha perdido y empieza de nuevo.
+El juego debe ser interactivo, esperando siempre la respuesta del usuario antes de continuar.
+Muestra instrucciones claras al inicio.
+Mantén un tono amigable y dinámico.
+
+utiliza html js y css, manteniendo el estilo de index.html
+
+las preguntas estan en un archivo llamado preguntas.txt

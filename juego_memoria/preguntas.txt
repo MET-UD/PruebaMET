@@ -1,0 +1,97 @@
+1. ¿Qué es la ingeniería de prompts?
+
+a) Programar modelos de inteligencia artificial desde cero
+b) Diseñar y optimizar instrucciones para obtener mejores respuestas de una IA
+c) Crear hardware para sistemas inteligentes
+d) Entrenar redes neuronales manualmente
+
+2. ¿Cuál es el objetivo principal de un prompt bien diseñado?
+
+a) Generar respuestas largas sin importar la calidad
+b) Obtener respuestas claras, precisas y útiles
+c) Reducir el tiempo de uso de la IA
+d) Evitar que la IA responda
+
+3. ¿Cuál de los siguientes elementos mejora más un prompt?
+
+a) Ambigüedad
+b) Falta de contexto
+c) Claridad y especificidad
+d) Uso excesivo de palabras técnicas
+
+4. ¿Qué significa proporcionar “contexto” en un prompt?
+
+a) Escribir muchas palabras sin relación
+b) Dar información adicional relevante para guiar la respuesta
+c) Usar lenguaje complejo
+d) Repetir la misma instrucción
+
+5. ¿Qué técnica consiste en incluir ejemplos dentro del prompt?
+
+a) Zero-shot prompting
+b) One-shot o few-shot prompting
+c) Prompt aleatorio
+d) Prompt inverso
+
+6. ¿Cuál es una característica de un mal prompt?
+
+a) Es claro
+b) Es específico
+c) Es ambiguo
+d) Incluye instrucciones detalladas
+
+7. ¿Qué es el “zero-shot prompting”?
+
+a) Dar múltiples ejemplos antes de la tarea
+b) No dar ningún ejemplo y pedir directamente la tarea
+c) Entrenar el modelo nuevamente
+d) Usar código para programar la IA
+
+8. ¿Por qué es útil estructurar un prompt en pasos o instrucciones?
+
+a) Para hacerlo más largo
+b) Para confundir al modelo
+c) Para guiar mejor el proceso de respuesta
+d) Para reducir la precisión
+
+9. ¿Cuál de los siguientes prompts es mejor?
+
+a) “Háblame de algo interesante.”
+b) “Explica la fotosíntesis.”
+c) “Explica la fotosíntesis en 5 pasos, para estudiantes de secundaria, usando ejemplos sencillos.”
+d) “Dime cosas.”
+
+10. ¿Qué rol cumple la iteración en la ingeniería de prompts?
+
+a) Ninguno
+b) Permite mejorar progresivamente los resultados ajustando el prompt
+c) Hace que la IA deje de funcionar
+d) Reemplaza el modelo
+
+11. ¿Qué tipo de prompt pediría una respuesta creativa?
+
+a) “Define el concepto de energía.”
+b) “Escribe un cuento corto de ciencia ficción sobre inteligencia artificial.”
+c) “Resuelve 2+2.”
+d) “Enumera los planetas.”
+
+12. ¿Qué problema puede generar un prompt mal diseñado?
+
+a) Respuestas más rápidas
+b) Respuestas irrelevantes o incorrectas
+c) Mejor comprensión del tema
+d) Mayor precisión
+
+✅ (Opcional) Clave de respuestas
+b
+b
+c
+b
+b
+c
+b
+c
+c
+b
+b
+b
