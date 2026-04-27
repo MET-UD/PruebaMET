@@ -239,6 +239,124 @@
             min-height: 120px;
         }
 
+        .memory-game {
+            background-color: white;
+        }
+
+        .game-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .game-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .game-info-item {
+            background: #f4f4f4;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #ff6b35;
+        }
+
+        .game-info-item h4 {
+            color: #003d82;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .game-info-item p {
+            color: #ff6b35;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .memory-card {
+            width: 100%;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #003d82 0%, #004c9c 100%);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .memory-card:hover:not(.flipped):not(.matched) {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 61, 130, 0.3);
+        }
+
+        .memory-card.flipped {
+            background: white;
+            color: #003d82;
+            border: 2px solid #ff6b35;
+        }
+
+        .memory-card.matched {
+            background: #90EE90;
+            color: #003d82;
+            border: 2px solid #003d82;
+            cursor: default;
+        }
+
+        .game-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .game-btn {
+            background-color: #003d82;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .game-btn:hover {
+            background-color: #004c9c;
+        }
+
+        .game-message {
+            text-align: center;
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .game-message.show {
+            display: block;
+        }
+
+        .game-message.success {
+            background-color: #90EE90;
+            color: #003d82;
+        }
+
         footer {
             background-color: #003d82;
             color: white;
@@ -249,6 +367,7 @@
         @media (max-width: 768px) {
             nav ul {
                 gap: 1rem;
+                font-size: 0.9rem;
             }
 
             .hero h1 {
@@ -263,6 +382,19 @@
             .hero p {
                 font-size: 1rem;
             }
+
+            .memory-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.8rem;
+            }
+
+            .memory-card {
+                font-size: 1.5rem;
+            }
+
+            .game-info {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -275,6 +407,7 @@
                 <ul>
                     <li><a href="#about">Acerca de</a></li>
                     <li><a href="#programs">Programas</a></li>
+                    <li><a href="#memory-game">Juego de Memoria</a></li>
                     <li><a href="#stats">Estadísticas</a></li>
                     <li><a href="#contact">Contacto</a></li>
                 </ul>
@@ -387,6 +520,42 @@
         </div>
     </section>
 
+    <!-- Sección Juego de Memoria -->
+    <section class="memory-game" id="memory-game">
+        <div class="container">
+            <h2 class="section-title">Juego de Memoria</h2>
+            <div class="game-container">
+                <p style="text-align: center; margin-bottom: 2rem; color: #666;">
+                    ¡Prueba tu memoria encontrando todos los pares! Haz clic en las tarjetas para revelar los emojis.
+                </p>
+                
+                <div class="game-info">
+                    <div class="game-info-item">
+                        <h4>Pares Encontrados</h4>
+                        <p id="matched-count">0</p>
+                    </div>
+                    <div class="game-info-item">
+                        <h4>Movimientos</h4>
+                        <p id="moves-count">0</p>
+                    </div>
+                    <div class="game-info-item">
+                        <h4>Tiempo</h4>
+                        <p id="time-count">0s</p>
+                    </div>
+                </div>
+
+                <div class="memory-grid" id="memory-grid"></div>
+
+                <div class="game-buttons">
+                    <button class="game-btn" onclick="initGame()">Nuevo Juego</button>
+                    <button class="game-btn" onclick="resetGame()">Reiniciar</button>
+                </div>
+
+                <div class="game-message" id="game-message"></div>
+            </div>
+        </div>
+    </section>
+
     <!-- Sección Contacto -->
     <section class="contact" id="contact">
         <div class="container">
@@ -433,5 +602,122 @@
             <p>Formando el futuro, construyendo la sociedad</p>
         </div>
     </footer>
+
+    <script>
+        const emojis = ['🎓', '📚', '🏫', '✏️', '💡', '🎨', '🔬', '🎯'];
+        let cards = [];
+        let flipped = [];
+        let matched = [];
+        let moves = 0;
+        let matchedCount = 0;
+        let seconds = 0;
+        let gameStarted = false;
+        let timerInterval;
+
+        function initGame() {
+            // Crear array con pares de emojis
+            cards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+            flipped = [];
+            matched = [];
+            moves = 0;
+            matchedCount = 0;
+            seconds = 0;
+            gameStarted = true;
+
+            // Limpiar el temporizador anterior
+            clearInterval(timerInterval);
+
+            // Renderizar tarjetas
+            renderCards();
+
+            // Iniciar temporizador
+            timerInterval = setInterval(() => {
+                seconds++;
+                document.getElementById('time-count').textContent = seconds + 's';
+            }, 1000);
+
+            // Limpiar mensaje
+            document.getElementById('game-message').classList.remove('show');
+        }
+
+        function renderCards() {
+            const grid = document.getElementById('memory-grid');
+            grid.innerHTML = '';
+
+            cards.forEach((emoji, index) => {
+                const card = document.createElement('button');
+                card.className = 'memory-card';
+                card.textContent = matched.includes(index) ? emoji : '?';
+
+                if (matched.includes(index)) {
+                    card.classList.add('matched');
+                } else if (flipped.includes(index)) {
+                    card.classList.add('flipped');
+                    card.textContent = emoji;
+                }
+
+                card.onclick = () => flipCard(index);
+                grid.appendChild(card);
+            });
+
+            updateStats();
+        }
+
+        function flipCard(index) {
+            if (!gameStarted || matched.includes(index) || flipped.includes(index)) return;
+
+            flipped.push(index);
+            renderCards();
+
+            if (flipped.length === 2) {
+                moves++;
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            const [first, second] = flipped;
+
+            if (cards[first] === cards[second]) {
+                matched.push(first, second);
+                matchedCount++;
+                flipped = [];
+                renderCards();
+
+                if (matchedCount === emojis.length) {
+                    endGame();
+                }
+            } else {
+                setTimeout(() => {
+                    flipped = [];
+                    renderCards();
+                }, 1000);
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('matched-count').textContent = matchedCount;
+            document.getElementById('moves-count').textContent = moves;
+        }
+
+        function endGame() {
+            gameStarted = false;
+            clearInterval(timerInterval);
+
+            const message = document.getElementById('game-message');
+            message.classList.add('show', 'success');
+            message.textContent = `¡Ganaste! Completaste el juego en ${moves} movimientos en ${seconds} segundos. 🎉`;
+        }
+
+        function resetGame() {
+            gameStarted = false;
+            clearInterval(timerInterval);
+            document.getElementById('game-message').classList.remove('show');
+            initGame();
+        }
+
+        // Iniciar juego al cargar la página
+        window.addEventListener('DOMContentLoaded', initGame);
+    </script>
 </body>
 </html>
